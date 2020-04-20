@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 import csv
 from datetime import datetime
+import re
+from pprint import pprint
 
 # Вы реализуете приложение для поиска билетов на концерт. Заполните коллекцию в Монго данными о предстоящих концертах и реализуйте следующие функции:
 # read_data: импорт данных из csv файла;
@@ -55,12 +57,9 @@ class Mongo_DB():
 
     def find_by_name(self, name):
         """Выводит вы мероприятия данного исполнителя, отсортированные по цене, если исполнителя такого нет, выводит список исполнителей"""
-        self.list_executor()
-        if name in self.list_executors:
-            for event in self.events.find({'Исполнитель': name}).sort('Цена'):
-                print(event)
-        if name not in self.list_executors:
-            print(self.list_executors)
+        pattern = re.compile(f'\d*\w*\s*\w*\s*\w*\s*\w*\s*{name}\s*\w*\s*\w*\s*\w*\s*\w*\s*\d*', re.IGNORECASE)
+        for event in self.events.find({'Исполнитель': pattern}, {'_id': False}).sort('Цена'):
+            pprint(event)
 
 
 if __name__ in '__main__':
